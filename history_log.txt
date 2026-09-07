@@ -1,0 +1,7 @@
+commit 4313c990a4ece0aa0ff4e0cf05fa5089e809335a
+Author: thomaslandgraf <thomaslandgraf@github.com>
+Date:   Mon Sep 7 04:47:37 2026 +0000
+
+    Register-page JS implementation
+
+ 2 files changed, 59 insertions(+), 7 deletions(-)
