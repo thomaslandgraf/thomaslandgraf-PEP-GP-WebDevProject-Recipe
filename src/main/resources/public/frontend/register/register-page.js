@@ -9,11 +9,17 @@ const BASE_URL = "http://localhost:8081"; // backend URL
  * - usernameInput, emailInput, passwordInput, repeatPasswordInput, registerButton
  */
 
+let usernameInput = document.getElementById("username-input");
+let emailInput = document.getElementById("email-input");
+let passwordInput = document.getElementById("password-input");
+let repeatPasswordInput = document.getElementById("repeat-password-input");
+let registerButton = document.getElementById("register-button");
+
 
 /* 
  * TODO: Ensure the register button calls processRegistration when clicked
  */
-
+registerButton.onclick = processRegistration;
 
 /**
  * TODO: Process Registration Function
@@ -39,11 +45,28 @@ const BASE_URL = "http://localhost:8081"; // backend URL
  * - Log error and alert user
  */
 async function processRegistration() {
-    // Implement registration logic here
+    
+    let username = usernameInput.value;
+    let email = emailInput.value;
+    let password = passwordInput.value;
+    let repeatPassword = repeatPasswordInput.value;
 
-    // Example placeholder:
-    // const registerBody = { username, email, password };
-const requestOptions = {
+    if(hasEmptyFields(username, email, password, repeatPassword)){
+        alert("Empty Field.");
+        return;
+    }
+
+    if(password !== repeatPassword){
+        alert("Passwords doesn't match.");
+        return;
+    }
+
+    const registerBody = {username: username,
+        email: email,
+        password: password
+    };
+
+    const requestOptions = {
         method: "POST",
         mode: "cors",
         cache: "no-cache",
@@ -57,5 +80,30 @@ const requestOptions = {
         referrerPolicy: "no-referrer",
         body: JSON.stringify(registerBody)
     };
-    // await fetch(...)
+
+    try {
+        const response = await fetch(`${BASE_URL}/register`, requestOptions);
+        if(response.status === 201){
+            window.location.href = "../login/login-page.html";
+        } else if (response.status === 409){
+            alert("user/email already exists.");
+        } else {
+            alert("An error occurred with this registration.");
+        }
+    }
+    catch (error) {
+        console.error("Registration error:", error);
+        alert("An error occurred with this registration.");
+    }
+}
+
+function hasEmptyFields(username, email, password, repeatPassword){
+    let emptyOrNull = false;
+    if(username == null || username.length == 0 ||
+        email == null || email.length == 0 || 
+        password == null || password.length == 0 ||
+        repeatPassword == null || repeatPassword.length == 0){
+            emptyOrNull = true;
+    }
+    return emptyOrNull;    
 }
