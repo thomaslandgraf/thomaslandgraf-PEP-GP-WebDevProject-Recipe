@@ -11,12 +11,16 @@ const BASE_URL = "http://localhost:8081"; // backend URL
  * - login button
  * - logout button (optional, for token testing)
  */
+let usernameInput = document.getElementById("login-input");
+let passwordInput = document.getElementById("password-input");
+let loginButton = document.getElementById("login-button");
+let logoutButton = document.getElementById("logout-button");
 
 /* 
  * TODO: Add click event listener to login button
  * - Call processLogin on click
  */
-
+loginButton.addEventListener("click", processLogin);
 
 /**
  * TODO: Process Login Function
@@ -42,8 +46,18 @@ const BASE_URL = "http://localhost:8081"; // backend URL
 async function processLogin() {
     // TODO: Retrieve username and password from input fields
     // - Trim input and validate that neither is empty
+    let username = usernameInput.value;
+    let password = passwordInput.value;
+
+    if(hasEmptyFields(username, password)){
+        alert("Empty Field.");
+        return;
+    }
 
     // TODO: Create a requestBody object with username and password
+    const requestBody = {username: username,
+        password: password
+    };
 
     const requestOptions = {
         method: "POST",
@@ -62,12 +76,27 @@ async function processLogin() {
 
     try {
         // TODO: Send POST request to http://localhost:8081/login using fetch with requestOptions
+        const response = await fetch(`${BASE_URL}/login`, requestOptions)
 
         // TODO: If response status is 200
         // - Read the response as text
         // - Response will be a space-separated string: "token123 true"
         // - Split the string into token and isAdmin flag
         // - Store both in sessionStorage using sessionStorage.setItem()
+        if(response.status == 200){
+            let responseText = await response.text();
+            let responseParts = responseText.split(" ");
+            sessionStorage.setItem("auth-token", responseParts[0]);
+            sessionStorage.setItem("is-admin", responseParts[1]);            
+            logoutButton.removeAttribute("hidden");
+            setTimeout(() => {
+                window.location.href = "../recipe/recipe-page.html";
+            }, 500);
+        } else if(response.status == 401) {
+            alert("Incorrect login!");
+        } else {
+            alert("Unknown issue!");
+        }
 
         // TODO: Optionally show the logout button if applicable
 
@@ -83,6 +112,17 @@ async function processLogin() {
     } catch (error) {
         // TODO: Handle any network or unexpected errors
         // - Log the error and alert the user
+        console.error(error);
+        alert("Unknown issue!");
     }
+}
+
+function hasEmptyFields(username, password){
+    let emptyOrNull = false;
+    if(username == null || username.length == 0 ||
+        password == null || password.length == 0){
+            emptyOrNull = true;
+    }
+    return emptyOrNull;
 }
 

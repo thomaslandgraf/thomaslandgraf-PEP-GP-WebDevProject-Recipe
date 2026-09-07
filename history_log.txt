@@ -1,7 +1,7 @@
-commit 4313c990a4ece0aa0ff4e0cf05fa5089e809335a
+commit 1a447d7138497e9a432305ba5d9c3e92bcdb714a
 Author: thomaslandgraf <thomaslandgraf@github.com>
-Date:   Mon Sep 7 04:47:37 2026 +0000
+Date:   Mon Sep 7 05:11:21 2026 +0000
 
-    Register-page JS implementation
+    login-page.html implementation.
 
- 2 files changed, 59 insertions(+), 7 deletions(-)
+ 3 files changed, 28 insertions(+), 15 deletions(-)
