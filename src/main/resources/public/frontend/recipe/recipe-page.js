@@ -16,14 +16,33 @@ window.addEventListener("DOMContentLoaded", () => {
      * - Admin link and logout button
      * - Search input
     */
+   let searchRecipeName = document.getElementById("search-input");
+   let searchButton = document.getElementById("search-button");
+   let recipeList = document.getElementById("recipe-list");
+   let addRecipeName = document.getElementById("add-recipe-name-input");
+   let recipeInstructions = document.getElementById("add-recipe-instructions-input");
+   let addRecipeButton = document.getElementById("add-recipe-submit-input");
+   let updateRecipeName = document.getElementById("update-recipe-name-input");
+   let updateRecipeInstructions = document.getElementById("update-recipe-instructions-input");
+   let updateRecipeButton = document.getElementById("update-recipe-submit-input");
+   let deleteRecipeName = document.getElementById("delete-recipe-name-input");
+   let deleteButton = document.getElementById("delete-recipe-submit-input");
+   let adminLink = document.getElementById("admin-link");
+   let logoutButton = document.getElementById("logout-button");
 
     /*
      * TODO: Show logout button if auth-token exists in sessionStorage
      */
+    if(sessionStorage.getItem("auth-token") !== null){
+        logoutButton.removeAttribute("hidden");
+    }
 
     /*
      * TODO: Show admin link if is-admin flag in sessionStorage is "true"
      */
+    if(sessionStorage.getItem("is-admin") === "true"){
+        adminLink.removeAttribute("hidden");
+    }
 
     /*
      * TODO: Attach event handlers
@@ -33,10 +52,16 @@ window.addEventListener("DOMContentLoaded", () => {
      * - Search button → searchRecipes()
      * - Logout button → processLogout()
      */
+    addRecipeButton.addEventListener("click", addRecipe);
+    updateRecipeButton.addEventListener("click", updateRecipe);
+    deleteButton.addEventListener("click", deleteRecipe);
+    searchButton.addEventListener("click", searchRecipes);
+    logoutButton.addEventListener("click", processLogout);
 
     /*
      * TODO: On page load, call getRecipes() to populate the list
      */
+    getRecipes();
 
 
     /**
@@ -48,6 +73,7 @@ window.addEventListener("DOMContentLoaded", () => {
      */
     async function searchRecipes() {
         // Implement search logic here
+     
     }
 
     /**
