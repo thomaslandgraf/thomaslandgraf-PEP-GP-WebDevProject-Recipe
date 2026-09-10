@@ -15,32 +15,32 @@ window.addEventListener("DOMContentLoaded", () => {
      * - Recipe list container
      * - Admin link and logout button
      * - Search input
-    */
-   let searchRecipeName = document.getElementById("search-input");
-   let searchButton = document.getElementById("search-button");
-   let recipeList = document.getElementById("recipe-list");
-   let addRecipeName = document.getElementById("add-recipe-name-input");
-   let recipeInstructions = document.getElementById("add-recipe-instructions-input");
-   let addRecipeButton = document.getElementById("add-recipe-submit-input");
-   let updateRecipeName = document.getElementById("update-recipe-name-input");
-   let updateRecipeInstructions = document.getElementById("update-recipe-instructions-input");
-   let updateRecipeButton = document.getElementById("update-recipe-submit-input");
-   let deleteRecipeName = document.getElementById("delete-recipe-name-input");
-   let deleteButton = document.getElementById("delete-recipe-submit-input");
-   let adminLink = document.getElementById("admin-link");
-   let logoutButton = document.getElementById("logout-button");
+     */
+    let searchRecipeName = document.getElementById("search-input");
+    let searchButton = document.getElementById("search-button");
+    let recipeList = document.getElementById("recipe-list");
+    let addRecipeName = document.getElementById("add-recipe-name-input");
+    let recipeInstructions = document.getElementById("add-recipe-instructions-input");
+    let addRecipeButton = document.getElementById("add-recipe-submit-input");
+    let updateRecipeName = document.getElementById("update-recipe-name-input");
+    let updateRecipeInstructions = document.getElementById("update-recipe-instructions-input");
+    let updateRecipeButton = document.getElementById("update-recipe-submit-input");
+    let deleteRecipeName = document.getElementById("delete-recipe-name-input");
+    let deleteButton = document.getElementById("delete-recipe-submit-input");
+    let adminLink = document.getElementById("admin-link");
+    let logoutButton = document.getElementById("logout-button");
 
     /*
      * TODO: Show logout button if auth-token exists in sessionStorage
      */
-    if(sessionStorage.getItem("auth-token") !== null){
+    if (sessionStorage.getItem("auth-token") !== null) {
         logoutButton.removeAttribute("hidden");
     }
 
     /*
      * TODO: Show admin link if is-admin flag in sessionStorage is "true"
      */
-    if(sessionStorage.getItem("is-admin") === "true"){
+    if (sessionStorage.getItem("is-admin") === "true") {
         adminLink.removeAttribute("hidden");
     }
 
@@ -73,7 +73,29 @@ window.addEventListener("DOMContentLoaded", () => {
      */
     async function searchRecipes() {
         // Implement search logic here
-     
+        let searchTerm = searchRecipeName.value;
+
+        const requestOptions = {
+            method: "GET",
+            headers: {
+                "Authorization": "Bearer " + sessionStorage.getItem("auth-token")
+            }
+        };
+
+        try {
+            const response = await fetch(`${BASE_URL}/recipes?name=${searchTerm}`, requestOptions);
+
+            if (response.status === 200) {
+                recipes = await response.json();
+                refreshRecipeList();
+            } else {
+                alert("Error with search recipes.")
+            }
+
+        } catch (error) {
+            console.error("Error: " + error);
+            alert("Error with search recipes.")
+        }
     }
 
     /**
@@ -86,6 +108,49 @@ window.addEventListener("DOMContentLoaded", () => {
      */
     async function addRecipe() {
         // Implement add logic here
+        let recipeName = addRecipeName.value;
+        let instructions = recipeInstructions.value;
+
+        if (hasEmptyFields(recipeName, instructions)) {
+            alert("Empty fields.");
+            return;
+        }
+
+        const requestBody = {
+            "name": recipeName,
+            "instructions": instructions
+        };
+
+        const requestOptions = {
+            method: "POST",
+            mode: "cors",
+            cache: "no-cache",
+            credentials: "same-origin",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + sessionStorage.getItem("auth-token")
+            },
+            redirect: "follow",
+            referrerPolicy: "no-referrer",
+            body: JSON.stringify(requestBody)
+        };
+
+        try {
+            const response = await fetch(`${BASE_URL}/recipes`, requestOptions);
+
+            if (response.status === 201) {
+                addRecipeName.value = "";
+                recipeInstructions.value = "";
+                getRecipes();
+            } else {
+                alert("Error add new recipe.");
+            }
+
+        } catch (error) {
+            console.error("Error: " + error);
+            alert("Error add new recipe.");
+        }
+
     }
 
     /**
@@ -119,6 +184,26 @@ window.addEventListener("DOMContentLoaded", () => {
      */
     async function getRecipes() {
         // Implement get logic here
+        const requestOptions = {
+            method: "GET",
+            headers: {
+                "Authorization": "Bearer " + sessionStorage.getItem("auth-token")
+            }
+        };
+        try {
+            const response = await fetch(`${BASE_URL}/recipes`, requestOptions);
+
+            if (response.status === 200) {
+                recipes = await response.json();
+                refreshRecipeList();
+            } else {
+                alert("Error to load recipes.")
+            }
+        } catch (error) {
+            console.error("Error: " + error);
+            alert("Error to load recipes.")
+        }
+
     }
 
     /**
@@ -129,6 +214,12 @@ window.addEventListener("DOMContentLoaded", () => {
      */
     function refreshRecipeList() {
         // Implement refresh logic here
+        recipeList.innerHTML = "";
+        for (let recipe of recipes) {
+            let listItem = document.createElement("li");
+            listItem.textContent = recipe.name + ": " + recipe.instructions;
+            recipeList.appendChild(listItem);
+        }
     }
 
     /**
@@ -140,6 +231,16 @@ window.addEventListener("DOMContentLoaded", () => {
      */
     async function processLogout() {
         // Implement logout logic here
+    }
+
+    function hasEmptyFields(name, instructions) {
+        if (name == null ||
+            name.length === 0 ||
+            instructions == null ||
+            instructions.length === 0) {
+            return true;
+        }
+        return false;
     }
 
 });

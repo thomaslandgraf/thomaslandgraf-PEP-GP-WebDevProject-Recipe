@@ -1,5 +1,8 @@
 {
   "editor.tabSize": 2,
   "files.autoSave": "afterDelay",
-  "java.compile.nullAnalysis.mode": "automatic"
+  "java.compile.nullAnalysis.mode": "automatic",
+  "[javascript]": {
+    "editor.defaultFormatter": "hookyqr.beautify"
+  }
 }
