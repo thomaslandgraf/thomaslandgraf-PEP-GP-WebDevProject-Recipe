@@ -163,6 +163,55 @@ window.addEventListener("DOMContentLoaded", () => {
      */
     async function updateRecipe() {
         // Implement update logic here
+        let updateName = updateRecipeName.value;
+        let updateInstructions = updateRecipeInstructions.value;
+
+        if (hasEmptyFields(updateName, updateInstructions)) {
+            alert("Empty fields.");
+            return;
+        }
+
+        let recipeToUpdate = recipes.find(recipe => recipe.name === updateName);
+
+        if(!recipeToUpdate){
+            alert("Recipe not found.");
+            return;
+        }
+
+         const requestBody = {
+            "name": updateName,
+            "instructions": updateInstructions
+        };
+
+        const requestOptions = {
+            method: "PUT",
+            mode: "cors",
+            cache: "no-cache",
+            credentials: "same-origin",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + sessionStorage.getItem("auth-token")
+            },
+            redirect: "follow",
+            referrerPolicy: "no-referrer",
+            body: JSON.stringify(requestBody)
+        };
+
+        try {
+            const response = await fetch(`${BASE_URL}/recipes/${recipeToUpdate.id}`, requestOptions);
+
+            if (response.status === 200) {
+                updateRecipeName.value = "";
+                updateRecipeInstructions.value = "";
+                getRecipes();
+            } else {
+                alert("Error to update recipe.");
+            }
+
+        } catch (error) {
+            console.error("Error: " + error);
+            alert("Error to update recipe.");
+        }
     }
 
     /**
@@ -174,6 +223,44 @@ window.addEventListener("DOMContentLoaded", () => {
      */
     async function deleteRecipe() {
         // Implement delete logic here
+        let  recipeNameToDelete = deleteRecipeName.value;
+
+        if(recipeNameToDelete === null || recipeNameToDelete.length === 0){
+            alert("Empty Field.");
+            return;
+        }
+
+        let recipeToDelete = recipes.find(recipe => recipe.name === recipeNameToDelete);
+
+        if (!recipeToDelete) {
+            alert("Recipe not found.");
+            return;
+        }
+
+        const requestOptions = {
+            method: "DELETE",
+            mode: "cors",
+            cache: "no-cache",
+            credentials: "same-origin",
+            headers: {
+                "Authorization": "Bearer " + sessionStorage.getItem("auth-token")
+            },
+        };
+
+        try {
+            const response = await fetch(`${BASE_URL}/recipes/${recipeToDelete.id}`, requestOptions);
+
+            if (response.status === 200) {
+                deleteRecipeName.value = "";
+                getRecipes();
+            } else {
+                alert("Error to delete recipe.");
+            }
+
+        } catch (error) {
+            console.error("Error: " + error);
+            alert("Error to delete recipe.");
+        }
     }
 
     /**
@@ -231,6 +318,25 @@ window.addEventListener("DOMContentLoaded", () => {
      */
     async function processLogout() {
         // Implement logout logic here
+        const requestOptions = {
+            method: "POST",
+            headers: {
+                "Authorization": "Bearer " + sessionStorage.getItem("auth-token")
+            }
+        };
+        try {
+            const response = await fetch(`${BASE_URL}/logout`, requestOptions);
+
+            if (response.status === 200) {
+                sessionStorage.clear();
+                window.location.href = "../login/login-page.html";
+            } else {
+                alert("Error to logout")
+            }
+        } catch (error) {
+            console.error("Error: " + error);
+            alert("Error to logout.")
+        }
     }
 
     function hasEmptyFields(name, instructions) {
