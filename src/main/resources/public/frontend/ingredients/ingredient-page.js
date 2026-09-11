@@ -52,6 +52,45 @@ getIngredients();
  */
 async function addIngredient() {
     // Implement add ingredient logic here
+    let addIngredientName = addIngredientNameInput.value.trim();
+
+    if(addIngredientName === null || addIngredientName.length === 0){
+        alert("Empty Field.");
+        return;
+    }
+
+    const requestBody = {
+        "name": addIngredientName
+    };
+
+    const requestOptions = {
+        method: "POST",
+        mode: "cors",
+        cache: "no-cache",
+        credentials: "same-origin",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + sessionStorage.getItem("auth-token")
+        },
+        redirect: "follow",
+        referrerPolicy: "no-referrer",
+        body: JSON.stringify(requestBody)
+    };
+
+    try {
+        const response = await fetch(`${BASE_URL}/ingredients`, requestOptions);
+
+        if (response.status === 201) {
+            addIngredientNameInput.value = "";
+            getIngredients();
+        } else {
+            alert("Error add a new ingredient.");
+        }
+
+    } catch (error) {
+        console.error("Error: " + error);
+        alert("Error add a new ingredient.");
+    }
 }
 
 
@@ -101,6 +140,44 @@ async function getIngredients() {
  */
 async function deleteIngredient() {
     // Implement delete ingredient logic here
+    let  deleteIngredientName = deleteIngredientNameInput.value.trim();
+
+        if(deleteIngredientName === null || deleteIngredientName.length === 0){
+            alert("Empty Field.");
+            return;
+        }
+
+        let ingredientToDelete = ingredients.find(ingredient => ingredient.name === deleteIngredientName);
+
+        if (!ingredientToDelete) {
+            alert("Ingredient not found.");
+            return;
+        }
+
+        const requestOptions = {
+            method: "DELETE",
+            mode: "cors",
+            cache: "no-cache",
+            credentials: "same-origin",
+            headers: {
+                "Authorization": "Bearer " + sessionStorage.getItem("auth-token")
+            },
+        };
+
+        try {
+            const response = await fetch(`${BASE_URL}/ingredients/${ingredientToDelete.id}`, requestOptions);
+
+            if (response.status === 200) {
+                deleteIngredientNameInput.value = "";
+                getIngredients();
+            } else {
+                alert("Error to delete ingredient.");
+            }
+
+        } catch (error) {
+            console.error("Error: " + error);
+            alert("Error to delete ingredient.");
+        }
 }
 
 
