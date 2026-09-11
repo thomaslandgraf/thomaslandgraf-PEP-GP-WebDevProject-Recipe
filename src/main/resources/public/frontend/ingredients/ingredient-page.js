@@ -167,7 +167,7 @@ async function deleteIngredient() {
         try {
             const response = await fetch(`${BASE_URL}/ingredients/${ingredientToDelete.id}`, requestOptions);
 
-            if (response.status === 200) {
+            if (response.status === 204) {
                 deleteIngredientNameInput.value = "";
                 getIngredients();
             } else {
