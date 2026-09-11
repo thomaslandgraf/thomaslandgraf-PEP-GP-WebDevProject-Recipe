@@ -13,20 +13,31 @@ const BASE_URL = "http://localhost:8081"; // backend URL
  * - adminLink (if visible conditionally)
  */
 
+let addIngredientNameInput = document.getElementById("add-ingredient-name-input");
+let deleteIngredientNameInput = document.getElementById("delete-ingredient-name-input");
+let ingredientListContainer = document.getElementById("ingredient-list");
+let backLink = document.getElementById("back-link");
+let addSubmitButton = document.getElementById("add-ingredient-submit-button");
+let deleteSubmitButton = document.getElementById("delete-ingredient-submit-button");
+
 /* 
  * TODO: Attach 'onclick' events to:
  * - "add-ingredient-submit-button" → addIngredient()
  * - "delete-ingredient-submit-button" → deleteIngredient()
  */
+addSubmitButton.addEventListener("click", addIngredient);
+deleteSubmitButton.addEventListener("click", deleteIngredient);
 
 /*
  * TODO: Create an array to keep track of ingredients
  */
 
+let ingredients = [];
+
 /* 
  * TODO: On page load, call getIngredients()
  */
-
+getIngredients();
 
 /**
  * TODO: Add Ingredient Function
@@ -55,6 +66,25 @@ async function addIngredient() {
  */
 async function getIngredients() {
     // Implement get ingredients logic here
+    const requestOptions = {
+        method: "GET",
+        headers: {
+            "Authorization": "Bearer " + sessionStorage.getItem("auth-token")
+        }
+    };
+    try {
+        const response = await fetch(`${BASE_URL}/ingredients`, requestOptions);
+
+        if (response.status === 200) {
+            ingredients = await response.json();
+            refreshIngredientList();
+        } else {
+            alert("Error to load ingredients.")
+        }
+    } catch (error) {
+        console.error("Error: " + error);
+        alert("Error to load ingredients.")
+    }
 }
 
 
@@ -86,4 +116,12 @@ async function deleteIngredient() {
  */
 function refreshIngredientList() {
     // Implement ingredient list rendering logic here
+    ingredientListContainer.innerHTML = "";
+    for (let ingredient of ingredients) {
+        let listItem = document.createElement("li");
+        let paragraph = document.createElement("p");
+        paragraph.textContent = ingredient.name;
+        listItem.appendChild(paragraph);
+        ingredientListContainer.appendChild(listItem);
+    }
 }
