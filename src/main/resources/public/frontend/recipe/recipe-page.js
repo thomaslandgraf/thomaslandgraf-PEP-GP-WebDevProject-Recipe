@@ -35,6 +35,9 @@ window.addEventListener("DOMContentLoaded", () => {
      */
     if (sessionStorage.getItem("auth-token") !== null) {
         logoutButton.removeAttribute("hidden");
+    } else {
+        window.location.href = "../login/login-page.html";
+        return;
     }
 
     /*
