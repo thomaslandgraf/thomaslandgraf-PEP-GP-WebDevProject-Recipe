@@ -28,24 +28,16 @@ let deleteSubmitButton = document.getElementById("delete-ingredient-submit-butto
 addSubmitButton.addEventListener("click", addIngredient);
 deleteSubmitButton.addEventListener("click", deleteIngredient);
 
-let ingredients = [];
-
-if(sessionStorage.getItem("auth-token") === null){
-    window.location.href = "../login/login-page.html";
-} else {
-    getIngredients();
-}
-
 /*
  * TODO: Create an array to keep track of ingredients
  */
 
-
+let ingredients = [];
 
 /* 
  * TODO: On page load, call getIngredients()
  */
-
+getIngredients();
 
 /**
  * TODO: Add Ingredient Function
